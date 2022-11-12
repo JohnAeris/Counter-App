@@ -10,7 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,14 @@ fun MainScreen() {
         mutableStateOf(0)
     }
 
+    var initialGap by remember {
+        mutableStateOf(1)
+    }
+
+    var gap by remember {
+        mutableStateOf("")
+    }
+
     val context = LocalContext.current
 
     Column(
@@ -61,7 +71,11 @@ fun MainScreen() {
                 .align(Alignment.End)
                 .clickable {
                     initialCount = 0
-                    Toast.makeText(context, "Reset", Toast.LENGTH_SHORT).show()
+                    gap = ""
+                    initialGap = 1
+                    Toast
+                        .makeText(context, "Reset", Toast.LENGTH_SHORT)
+                        .show()
                 },
             elevation = 8.dp
         ) {
@@ -77,22 +91,23 @@ fun MainScreen() {
             )
         }
         
-        Spacer(modifier = Modifier.height(200.dp))
+        Spacer(modifier = Modifier.height(150.dp))
 
         Text(
             text = initialCount.toString(),
-            fontSize = 100.sp,
+            fontSize = 70.sp,
             fontWeight = FontWeight.SemiBold,
+            maxLines = 5
         )
         
         Spacer(modifier = Modifier.height(50.dp))
 
-        Row() {
+        Row {
             Card(
                 modifier = Modifier
                     .wrapContentSize()
                     .clickable {
-                        initialCount--
+                        initialCount -= initialGap
                     },
                 elevation = 8.dp,
                 border = BorderStroke(5.dp, Color.Black)
@@ -105,14 +120,14 @@ fun MainScreen() {
                         .background(Color.White)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(130.dp))
 
             Card(
                 modifier = Modifier
                     .wrapContentSize()
                     .clickable {
-                        initialCount++
+                        initialCount += initialGap
                     },
                 elevation = 8.dp,
                 border = BorderStroke(5.dp, Color.Black)
@@ -126,42 +141,40 @@ fun MainScreen() {
                 )
             }
         }
-    }
-}
 
-@Preview
-@Composable
-fun AddButton() {
-    Card(
-        modifier = Modifier
-            .wrapContentSize()
-            .clickable {
+        Spacer(modifier = Modifier.height(50.dp))
 
-            },
-        elevation = 8.dp,
-        border = BorderStroke(5.dp, Color.Black)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.add_ic),
-            contentDescription = "Add button",
-            Modifier.size(70.dp)
-        )
-    }
-}
+        Column {
+            Text(
+                text = "Enter the number of gap",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+            )
 
-@Preview
-@Composable
-fun MinusButton() {
-    Card(
-        modifier = Modifier.wrapContentSize(),
-        elevation = 8.dp,
-        border = BorderStroke(5.dp, Color.Black)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.minus_ic),
-            contentDescription = "Minus button",
-            Modifier.size(70.dp)
-        )
+            OutlinedTextField(
+                value = gap,
+                onValueChange = { value ->
+                    if (value.length <= 3) {
+                        gap = value.filter { it.isDigit() }
+                    } else {
+                        Toast.makeText(context, "Reached the limit", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(R.color.beau_blue),
+                    unfocusedBorderColor = colorResource(R.color.black)
+                )
+            )
+
+            try {
+                if (gap.isNotEmpty()) {
+                    initialGap = gap.toInt()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 
