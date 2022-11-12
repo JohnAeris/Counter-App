@@ -50,11 +50,11 @@ fun MainScreen() {
         mutableStateOf(0)
     }
 
-    var initialGap by remember {
+    var initialInterval by remember {
         mutableStateOf(1)
     }
 
-    var gap by remember {
+    var interval by remember {
         mutableStateOf("")
     }
 
@@ -71,8 +71,8 @@ fun MainScreen() {
                 .align(Alignment.End)
                 .clickable {
                     initialCount = 0
-                    gap = ""
-                    initialGap = 1
+                    interval = ""
+                    initialInterval = 1
                     Toast
                         .makeText(context, "Reset", Toast.LENGTH_SHORT)
                         .show()
@@ -107,7 +107,7 @@ fun MainScreen() {
                 modifier = Modifier
                     .wrapContentSize()
                     .clickable {
-                        initialCount -= initialGap
+                        initialCount -= initialInterval
                     },
                 elevation = 8.dp,
                 border = BorderStroke(5.dp, Color.Black)
@@ -127,7 +127,7 @@ fun MainScreen() {
                 modifier = Modifier
                     .wrapContentSize()
                     .clickable {
-                        initialCount += initialGap
+                        initialCount += initialInterval
                     },
                 elevation = 8.dp,
                 border = BorderStroke(5.dp, Color.Black)
@@ -146,17 +146,17 @@ fun MainScreen() {
 
         Column {
             Text(
-                text = "Enter the number of gap",
+                text = "Enter the interval: $interval",
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(5.dp)
             )
 
             OutlinedTextField(
-                value = gap,
+                value = interval,
                 onValueChange = { value ->
                     if (value.length <= 3) {
-                        gap = value.filter { it.isDigit() }
+                        interval = value.filter { it.isDigit() }
                     } else {
                         Toast.makeText(context, "Reached the limit", Toast.LENGTH_SHORT).show()
                     }
@@ -168,8 +168,8 @@ fun MainScreen() {
             )
 
             try {
-                if (gap.isNotEmpty()) {
-                    initialGap = gap.toInt()
+                if (interval.isNotEmpty()) {
+                    initialInterval = interval.toInt()
                 }
             } catch (e: Exception) {
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
